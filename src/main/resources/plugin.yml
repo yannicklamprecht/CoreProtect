@@ -9,6 +9,9 @@ author: Intelli
 softdepend: [WorldEdit]
 description: >
              Provides block protection for your server.
+libraries:
+  - org.mariadb.jdbc:mariadb-java-client:3.1.4
+
 commands:
   co:
     description: Utilize the plugin

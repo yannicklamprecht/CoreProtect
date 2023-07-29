@@ -1,5 +1,7 @@
 package net.coreprotect.config;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.sql.Connection;
@@ -12,17 +14,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-
 import net.coreprotect.bukkit.BukkitAdapter;
 import net.coreprotect.consumer.Queue;
 import net.coreprotect.database.Database;
@@ -36,6 +27,12 @@ import net.coreprotect.spigot.SpigotAdapter;
 import net.coreprotect.utility.Chat;
 import net.coreprotect.utility.Color;
 import net.coreprotect.utility.Util;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 
 public class ConfigHandler extends Queue {
     public static int SERVER_VERSION = 0;
@@ -222,15 +219,20 @@ public class ConfigHandler extends Queue {
         }
         else {
             HikariConfig config = new HikariConfig();
+
             try {
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                config.setDriverClassName("com.mysql.cj.jdbc.Driver");
-            }
-            catch (Exception e) {
-                config.setDriverClassName("com.mysql.jdbc.Driver");
+                Class.forName("org.mariadb.jdbc.Driver");
+            } catch (Exception e) {
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+                } catch (Exception e2) {
+                    config.setDriverClassName("com.mysql.jdbc.Driver");
+                }
             }
 
-            config.setJdbcUrl("jdbc:mysql://" + ConfigHandler.host + ":" + ConfigHandler.port + "/" + ConfigHandler.database);
+
+            config.setJdbcUrl("jdbc:mariadb://" + ConfigHandler.host + ":" + ConfigHandler.port + "/" + ConfigHandler.database);
             config.setUsername(ConfigHandler.username);
             config.setPassword(ConfigHandler.password);
             config.setMaximumPoolSize(ConfigHandler.maximumPoolSize);
